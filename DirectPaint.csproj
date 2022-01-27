@@ -1,0 +1,191 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>disable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <ApplicationIcon>Pincel.ico</ApplicationIcon>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="_copia\**" />
+    <EmbeddedResource Remove="_copia\**" />
+    <None Remove="_copia\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Settings1.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Graf\Abrir.png" />
+    <None Remove="Graf\Aerosol.cur" />
+    <None Remove="Graf\Aerosol.png" />
+    <None Remove="Graf\Ancho1.png" />
+    <None Remove="Graf\Ancho2.png" />
+    <None Remove="Graf\Ancho3.png" />
+    <None Remove="Graf\Ancho4.png" />
+    <None Remove="Graf\Arc.cur" />
+    <None Remove="Graf\Arc.png" />
+    <None Remove="Graf\Bezier.cur" />
+    <None Remove="Graf\Bezier.png" />
+    <None Remove="Graf\Blur.cur" />
+    <None Remove="Graf\Blur.png" />
+    <None Remove="Graf\Borde.png" />
+    <None Remove="Graf\Borrador.png" />
+    <None Remove="Graf\Brush.png" />
+    <None Remove="Graf\Cerrado.png" />
+    <None Remove="Graf\Cfg.png" />
+    <None Remove="Graf\Copiar.png" />
+    <None Remove="Graf\Cortar.png" />
+    <None Remove="Graf\Deshacer.png" />
+    <None Remove="Graf\Efecto.png" />
+    <None Remove="Graf\Elipse.cur" />
+    <None Remove="Graf\Elipse.png" />
+    <None Remove="Graf\Flood.cur" />
+    <None Remove="Graf\Flood.png" />
+    <None Remove="Graf\FondoTransp.png" />
+    <None Remove="Graf\Frames.png" />
+    <None Remove="Graf\Grabar.png" />
+    <None Remove="Graf\Herr.png" />
+    <None Remove="Graf\Iluminar.cur" />
+    <None Remove="Graf\Iluminar.png" />
+    <None Remove="Graf\InvSel.png" />
+    <None Remove="Graf\Lin.cur" />
+    <None Remove="Graf\Lin.png" />
+    <None Remove="Graf\Lápiz.png" />
+    <None Remove="Graf\Mano.png" />
+    <None Remove="Graf\ManoA.cur" />
+    <None Remove="Graf\ManoC.cur" />
+    <None Remove="Graf\Muestra.cur" />
+    <None Remove="Graf\Muestra.png" />
+    <None Remove="Graf\Nuevo.png" />
+    <None Remove="Graf\NuevoEf.png" />
+    <None Remove="Graf\Pegar.png" />
+    <None Remove="Graf\Pincel.cur" />
+    <None Remove="Graf\Pincel.png" />
+    <None Remove="Graf\Poli.cur" />
+    <None Remove="Graf\Poli.png" />
+    <None Remove="Graf\PoliLin.cur" />
+    <None Remove="Graf\PoliLin.png" />
+    <None Remove="Graf\QuadraticBezier.cur" />
+    <None Remove="Graf\QuadraticBezier.png" />
+    <None Remove="Graf\Recortar.png" />
+    <None Remove="Graf\Rect.cur" />
+    <None Remove="Graf\Rect.png" />
+    <None Remove="Graf\RectRedond.cur" />
+    <None Remove="Graf\RectRedond.png" />
+    <None Remove="Graf\Rehacer.png" />
+    <None Remove="Graf\Relleno.png" />
+    <None Remove="Graf\RotarDer.png" />
+    <None Remove="Graf\RotarIzq.png" />
+    <None Remove="Graf\Sel.cur" />
+    <None Remove="Graf\Sel.png" />
+    <None Remove="Graf\SelLibre.cur" />
+    <None Remove="Graf\SelLibre.png" />
+    <None Remove="Graf\Texto.cur" />
+    <None Remove="Graf\Texto.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Pincel.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Graf\Abrir.png" />
+    <EmbeddedResource Include="Graf\Aerosol.cur" />
+    <EmbeddedResource Include="Graf\Aerosol.png" />
+    <EmbeddedResource Include="Graf\Ancho1.png" />
+    <EmbeddedResource Include="Graf\Ancho2.png" />
+    <EmbeddedResource Include="Graf\Ancho3.png" />
+    <EmbeddedResource Include="Graf\Ancho4.png" />
+    <EmbeddedResource Include="Graf\Arc.cur" />
+    <EmbeddedResource Include="Graf\Arc.png" />
+    <EmbeddedResource Include="Graf\Bezier.cur" />
+    <EmbeddedResource Include="Graf\Bezier.png" />
+    <EmbeddedResource Include="Graf\Blur.cur" />
+    <EmbeddedResource Include="Graf\Blur.png" />
+    <EmbeddedResource Include="Graf\Borde.png" />
+    <EmbeddedResource Include="Graf\Borrador.png" />
+    <EmbeddedResource Include="Graf\Brush.png" />
+    <EmbeddedResource Include="Graf\Cerrado.png" />
+    <EmbeddedResource Include="Graf\Cfg.png" />
+    <EmbeddedResource Include="Graf\Copiar.png" />
+    <EmbeddedResource Include="Graf\Cortar.png" />
+    <EmbeddedResource Include="Graf\Deshacer.png" />
+    <EmbeddedResource Include="Graf\Efecto.png" />
+    <EmbeddedResource Include="Graf\Elipse.cur" />
+    <EmbeddedResource Include="Graf\Elipse.png" />
+    <EmbeddedResource Include="Graf\Flood.cur" />
+    <EmbeddedResource Include="Graf\Flood.png" />
+    <EmbeddedResource Include="Graf\FondoTransp.png" />
+    <EmbeddedResource Include="Graf\Frames.png" />
+    <EmbeddedResource Include="Graf\Grabar.png" />
+    <EmbeddedResource Include="Graf\Herr.png" />
+    <EmbeddedResource Include="Graf\Iluminar.cur" />
+    <EmbeddedResource Include="Graf\Iluminar.png" />
+    <EmbeddedResource Include="Graf\InvSel.png" />
+    <EmbeddedResource Include="Graf\Lin.cur" />
+    <EmbeddedResource Include="Graf\Lin.png" />
+    <EmbeddedResource Include="Graf\Lápiz.png" />
+    <EmbeddedResource Include="Graf\Mano.png" />
+    <EmbeddedResource Include="Graf\ManoA.cur" />
+    <EmbeddedResource Include="Graf\ManoC.cur" />
+    <EmbeddedResource Include="Graf\Muestra.cur" />
+    <EmbeddedResource Include="Graf\Muestra.png" />
+    <EmbeddedResource Include="Graf\Nuevo.png" />
+    <EmbeddedResource Include="Graf\NuevoEf.png" />
+    <EmbeddedResource Include="Graf\Pegar.png" />
+    <EmbeddedResource Include="Graf\Pincel.cur" />
+    <EmbeddedResource Include="Graf\Pincel.png" />
+    <EmbeddedResource Include="Graf\Poli.cur" />
+    <EmbeddedResource Include="Graf\Poli.png" />
+    <EmbeddedResource Include="Graf\PoliLin.cur" />
+    <EmbeddedResource Include="Graf\PoliLin.png" />
+    <EmbeddedResource Include="Graf\QuadraticBezier.cur" />
+    <EmbeddedResource Include="Graf\QuadraticBezier.png" />
+    <EmbeddedResource Include="Graf\Recortar.png" />
+    <EmbeddedResource Include="Graf\Rect.cur" />
+    <EmbeddedResource Include="Graf\Rect.png" />
+    <EmbeddedResource Include="Graf\RectRedond.cur" />
+    <EmbeddedResource Include="Graf\RectRedond.png" />
+    <EmbeddedResource Include="Graf\Rehacer.png" />
+    <EmbeddedResource Include="Graf\Relleno.png" />
+    <EmbeddedResource Include="Graf\RotarDer.png" />
+    <EmbeddedResource Include="Graf\RotarIzq.png" />
+    <EmbeddedResource Include="Graf\Sel.cur" />
+    <EmbeddedResource Include="Graf\Sel.png" />
+    <EmbeddedResource Include="Graf\SelLibre.cur" />
+    <EmbeddedResource Include="Graf\SelLibre.png" />
+    <EmbeddedResource Include="Graf\Texto.cur" />
+    <EmbeddedResource Include="Graf\Texto.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="MediaNativo">
+      <HintPath>..\Wew\bin\Debug\net6.0-windows\MediaNativo.dll</HintPath>
+    </Reference>
+    <Reference Include="Wew">
+      <HintPath>..\Wew\bin\Debug\net6.0-windows\Wew.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>
