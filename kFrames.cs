@@ -2,130 +2,110 @@
 using Wew.Media;
 using Wew;
 
-namespace DirectPaint
-{
-class kFrames : cDockControl
-{	readonly cList<fVista> ml_visFmes;
-	readonly cListBox lbFmes;
+namespace DirectPaint;
+
+sealed class kFrames : cDockControl
+{	readonly cListBox lbFmes;
+	public readonly cList<fVista> Frames;
+	private static void s_LimpiaPropsImg()
+	{	mMod.Cfg.ContainerFormat = default; mMod.Cfg.Format = ePixelFormat.Bits32BGRA; mMod.Cfg.EsCubo = false;
+	}
 public kFrames()
 {	cButton btn;
 
-	Width = 230; Text = "Frames"; IsChildForm = false; HideOnClose = true; Dock = eDirection.Left;
-	ml_visFmes = new cList<fVista>();
-	lbFmes = new cListBox() {	Size = new Point(120, 450), Data = ml_visFmes};
+	Width = 180; Text = "Frames"; IsForm = false; HideOnClose = true; Dock = eDirection.Left;
+	Frames = [];
+	lbFmes = new cListBox {	Size = new Point(70, 450)};
+		lbFmes.Load(Frames);
 		AddControl(lbFmes);
-	btn = new cButton() {	Text = "New", LocationMargin = new Point(125, 0)};
+	btn = new cButton {	Text = "New", LocationMargin = new Point(75, 0)};
 		btn.Click += New_Click;
 		AddControl(btn);
-	btn = new cButton() {	Text = "Open", LocationMargin = new Point(125, 30)};
+	btn = new cButton {	Text = "Open", LocationMargin = new Point(75, 30)};
 		btn.Click += Open_Click;
 		AddControl(btn);
-	btn = new cButton() {	Text = "Remove", LocationMargin = new Point(125, 60)};
+	btn = new cButton {	Text = "Remove", LocationMargin = new Point(75, 60)};
 		btn.Click += Remove_Click;
 		AddControl(btn);
 }
-public void Nuevo()											{	m_LimpiaPropsImg(); m_Cierra(); m_Add(0); lbFmes.Refresh();}
-public bool Abre(string sRuta)								{	m_LimpiaPropsImg(); return m_bAdd(sRuta, true);}
-public bool Graba(string sRuta)
-{	cBitmap bmpImg = null; System.IntPtr ptrDds = System.IntPtr.Zero;
-
-try
-{	// ** Dds
-	if (System.IO.Path.GetExtension(sRuta).ToUpperInvariant() == ".DDS")
-	{	PointI pti; int iStride, iTamFme; System.IntPtr ptr;
-	
-		pti = ml_visFmes[0].Tam.GetRounded(); iStride = pti.X * 4; iTamFme = iStride * pti.Y; // ** Unir fmes
-		ptrDds = ptr = mHelper.Malloc(iTamFme * ml_visFmes.Count);
-		foreach (fVista vis in ml_visFmes)
-		{	using (cBitmap bmp = vis.CompónImg())
-			{		if (bmp.PixelSize != pti)	{	mDialog.MsgBoxExclamation("All frames must be the same size", "Save"); return false;}
-				bmp.PixelFormat = ePixelFormat._32bppBGRA; bmp.CopyTo(RectangleI.Empty, iStride, ptr, iTamFme); ptr += iTamFme;
-			}
-		}
-		cTexture.Save(sRuta, ptrDds, (iTamFme * ml_visFmes.Count), ml_visFmes.Count, pti, mMod.Cfg.Format, mMod.Cfg.EsCubo); // Grabar
-	// ** Img
-	} else
-	{	foreach (fVista vis in ml_visFmes)									// ** Unir fmes
-		{	cBitmap bmp;
+public void NuevoCnt()										{	s_LimpiaPropsImg(); m_Cierra(); m_AddFme(0); lbFmes.Load(Frames, null, true);}
+public bool AbreCnt(string sRuta)							{	s_LimpiaPropsImg(); return m_bAddCnt(sRuta, true);}
+public bool GrabaCnt(string sRuta)
+{try
+{	cBitmap.Save(sRuta, default, new cBitmap.cExtradata {	Format = mMod.Cfg.Format, IsCube = mMod.Cfg.EsCubo}, Frames.Count
+		, (cBitmap.cFrameEncoder fe) =>
+		{	bool bMultiFme;
 		
-			bmp = vis.CompónImg(); bmp.Metadata = vis.Metadata;
-			if (bmpImg == null)	bmpImg = bmp;	else	bmpImg.InsertFrame(bmp);
-		}
-		bmpImg.Save(sRuta);													// Grabar
-	}
-	foreach (fVista vis in ml_visFmes)	vis.Changed = false;
+			bMultiFme = mImaging.IsMultiframe(fe.ContainerFormat);
+			_ = fe.WriteContainerMetadata(Frames[0].Metadata);
+			foreach (fVista vis in Frames)
+			{	cBitmap.MetadataWriter? mw;
+			
+				fe.Create();
+				mw = fe.WriteMetadata(vis.Metadata);
+					if (mw is not null)
+					{	if (fe.ContainerFormat == cBitmap.eContainerFormat.Jpeg)
+							mw.Value.Write("/app1/ifd/{ushort=274}", 1);
+						else if (fe.ContainerFormat == cBitmap.eContainerFormat.Tiff)
+							mw.Value.Write("/ifd/{ushort=274}", 1);
+					}
+				vis.EscribeFme(fe);	if (!bMultiFme)	break;					// Escribir fme.  Si es el único: saltar
+			}
+			mMod.Cfg.ContainerFormat = fe.ContainerFormat;					// Actualizar cnt fmt
+		});
+	foreach (fVista vis in Frames)	vis.Changed = false;					// Ya no hay cambio
 } catch (System.Exception ex)
-{	mDialog.MsgBoxExclamation(ex.Message, "Error");
+{	mDialog.MsgBoxError(ex.Message + "\nCheck:\nPixel format\nSize of all frames\nThe size must be a multiple of 4 for BC formats");
 	return false;
-} finally
-{	if (bmpImg != null)
-	{	for (int i = 0; i < bmpImg.FrameCount; i++)	bmpImg[i].Metadata = null; // No perder metas
-		bmpImg.Dispose();
-	}
-	if (ptrDds != System.IntPtr.Zero)	mHelper.Free(ptrDds);
 }
 	return true;
 }
-private void New_Click(object sender)						{	m_Add(ml_visFmes.Count); lbFmes.Refresh(); mMod.MainWnd.Changed = true;}
+private void New_Click(object sender)						{	m_AddFme(Frames.Count); lbFmes.Load(Frames, null, true); mMod.MainWnd.Changed = true;}
 private void Open_Click(object sender)
-{	string s;
+{	string? s;
 
-	s = mDialog.ShowOpenFile(mMod.FILTRO_ABRIR, mMod.DLG_IMG_GUID);	if (s == null) return;
-	m_bAdd(s, false); mMod.MainWnd.Changed = true;
+	s = mDialog.ShowOpenFile(mMod.FILTRO_ABRIR, mMod.DLG_IMG_GUID);	if (s is null) return;
+	_ = m_bAddCnt(s, false); mMod.MainWnd.Changed = true;
 }
 private void Remove_Click(object sender)
-{	fVista vis = (fVista)lbFmes.SelectedItem;
+{	fVista? vis = (fVista?)lbFmes.SelectedValue;
 
-		if (ml_visFmes.Count == 1 || vis == null ||
-			!mDialog.MsgBoxQuestion(string.Format("Remove frame {0}?  This operation can't be undone", vis.Text), "Remove"))	return;
-	vis.Close(); ml_visFmes.Remove(vis);
-	for (int i = 0; i < ml_visFmes.Count; i++)	ml_visFmes[i].Text = (i + 1).ToString();
-	lbFmes.Refresh(); mMod.MainWnd.Changed = true;
+		if (Frames.Count == 1 || vis is null ||
+				!mDialog.MsgBoxQuestion(string.Format("Remove frame {0}?  This operation can't be undone", vis.Text), "Remove"))
+		{	return;
+		}
+	vis.Close(); Frames.Remove(vis);
+	for (int i = 0; i < Frames.Count; i++)	Frames[i].Text = (i + 1).ToString();
+	lbFmes.Load(Frames, null, true); mMod.MainWnd.Changed = true;
 }
 private void m_Cierra()
-{	foreach (fVista vis in ml_visFmes)	vis.Close();
-	ml_visFmes.Clear(); lbFmes.Refresh();
+{	foreach (fVista vis in Frames)	vis.Close();
+	Frames.Clear(); lbFmes.Load(null);
 }
-private void m_LimpiaPropsImg()
-{	mMod.Cfg.Format = cTexture.eFormat.BC1_R5G6B5A1; mMod.Cfg.EsCubo = false;
-}
-private bool m_bAdd(string sRuta, bool bCerrarActual)
-{	cBitmap bmpArchi = null; System.IntPtr ptrDds = System.IntPtr.Zero;
+private bool m_bAddCnt(string sRuta, bool bEsPrincipal)
+{	cBitmap bmpArchi;														// Bmp sin dispose
 
 try
-{	using (System.IO.Stream stm = System.IO.File.Open(sRuta					// Abrir incluso si el archivo está bloqueado
-		, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read))
-	{	// ** Dds
-		if (stm.PeekInt() == 0x20534444)									// "DDS "
-		{	System.IntPtr ptr; int iFmes; PointI ptiTam; cTexture.eFormat fmt; bool bCubo; cBitmap bmp;
-
-			ptrDds = ptr = cTexture.Open(stm, (int)stm.Length, out iFmes, out ptiTam, out fmt, out bCubo);
-			mMod.Cfg.Format = fmt; mMod.Cfg.EsCubo = bCubo;
-			for (int i = 0, iStride = ptiTam.X * 4, iTamFme = iStride * ptiTam.Y; i < iFmes; i++, ptr += iTamFme)
-			{	bmp = new cBitmap(ptiTam.X, ptiTam.Y, ePixelFormat._32bppBGRA, iStride, ptr, iTamFme);
-				if (bmpArchi == null)	bmpArchi = bmp;	else	bmpArchi.InsertFrame(bmp);
-			}
-		// ** Img
-		} else
-			bmpArchi = new cBitmap(stm, (int)stm.Length, true);
+{	bmpArchi = new cBitmap(sRuta, true);
+	if (bEsPrincipal)
+	{	mMod.Cfg.ContainerFormat = bmpArchi.ContainerFormat;
+		if (bmpArchi.Extradata is not null)	{	mMod.Cfg.Format = bmpArchi.Extradata.Format; mMod.Cfg.EsCubo = bmpArchi.Extradata.IsCube;} // Tomar extradata
+		m_Cierra();
 	}
-	if (bCerrarActual)	m_Cierra();
-	for (int i = 0; i < bmpArchi.FrameCount; i++)	m_Add(ml_visFmes.Count, bmpArchi[i]); // ** Mostrar
-	lbFmes.Refresh();
+	for (int i = 0; i < bmpArchi.FrameCount; i++)	m_AddFme(Frames.Count, bmpArchi[i]); // ** Mostrar
+	bmpArchi.ClearFrames();													// Quitar fmes del principal para no elim los demás al elim el 1°
+	lbFmes.Load(Frames, null, true);
 } catch (System.Exception ex)
-{	mDialog.MsgBoxExclamation(ex.Message, "Error");
+{	mDialog.MsgBoxError(ex);
 	return false;
-} finally
-{	if (ptrDds != System.IntPtr.Zero)	mHelper.Free(ptrDds);
 }
 	return true;
 }
-private void m_Add(int iNum, cBitmap bmpBmp = null)
+private void m_AddFme(int iNum, cBitmap? bmpBmp = null)
 {	fVista vis;
 
 	vis = new fVista(bmpBmp) {	Container = this.Container, Text = (iNum + 1).ToString()};
-	ml_visFmes.Add(vis);
+	Frames.Add(vis);
 	vis.Show();
-}
 }
 }

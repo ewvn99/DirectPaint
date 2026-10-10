@@ -1,4 +1,4 @@
-﻿namespace DirectPaint {
+﻿namespace DirectPaint;
     
     
     // Esta clase le permite controlar eventos específicos en la clase de configuración:
@@ -25,4 +25,4 @@
             // Agregar código para administrar aquí el evento SettingsSaving.
         }
     }
-}
+
